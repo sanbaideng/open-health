@@ -159,6 +159,14 @@ export default function ChatSettingSideBar({isRightSidebarOpen, chatRoomId}: Cha
             apiURL: apiURL || selectedLLMProvider.apiURL
         };
         setSelectedLLMProvider(data);
+        
+        // Save to localStorage
+        localStorage.setItem('llmProvider', JSON.stringify({
+            id: data.id,
+            apiKey: data.apiKey,
+            apiURL: data.apiURL
+        }));
+
         await fetch(`/api/llm-providers/${selectedLLMProvider.id}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
@@ -170,6 +178,52 @@ export default function ChatSettingSideBar({isRightSidebarOpen, chatRoomId}: Cha
         // Patch ChatRoom with new LLMProvider
         await onChangeChatRoom({llmProviderId: selectedLLMProvider.id, llmProviderModelId: null});
     }
+
+    // Load saved settings from localStorage
+    useEffect(() => {
+        if (!llmProvidersData?.llmProviders) return;
+        
+        const savedSettings = localStorage.getItem('llmProvider');
+        if (savedSettings) {
+            const settings = JSON.parse(savedSettings);
+            const provider = llmProvidersData.llmProviders.find(p => p.id === settings.id);
+            if (provider) {
+                const updatedProvider = {
+                    ...provider,
+                    apiKey: settings.apiKey,
+                    apiURL: settings.apiURL
+                };
+                setSelectedLLMProvider(updatedProvider);
+                onChangeChatRoom({llmProviderId: updatedProvider.id});
+            }
+        }
+    }, [llmProvidersData]);
+
+    // Save selected model to localStorage
+    useEffect(() => {
+        if (selectedLLMProviderModel) {
+            localStorage.setItem('selectedModel', JSON.stringify({
+                providerId: selectedLLMProvider?.id,
+                modelId: selectedLLMProviderModel.id
+            }));
+        }
+    }, [selectedLLMProviderModel]);
+
+    // Load saved model from localStorage
+    useEffect(() => {
+        if (!llmProviderModels.length) return;
+        
+        const savedModel = localStorage.getItem('selectedModel');
+        if (savedModel) {
+            const settings = JSON.parse(savedModel);
+            if (settings.providerId === selectedLLMProvider?.id) {
+                const model = llmProviderModels.find(m => m.id === settings.modelId);
+                if (model) {
+                    setSelectedLLMProviderModel(model);
+                }
+            }
+        }
+    }, [llmProviderModels]);
 
     return <div className={`border-l bg-gray-50 flex flex-col transition-all duration-300 ease-in-out
           ${isRightSidebarOpen ? 'w-80' : 'w-0'} relative`}>
