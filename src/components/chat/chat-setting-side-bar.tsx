@@ -144,6 +144,8 @@ export default function ChatSettingSideBar({isRightSidebarOpen, chatRoomId}: Cha
         })
     }
 
+    const DEFAULT_BASE_URL = "https://www.gptapi.us/v1";
+
     const onLLMProviderChange = async ({
                                            apiKey,
                                            apiURL,
@@ -156,7 +158,7 @@ export default function ChatSettingSideBar({isRightSidebarOpen, chatRoomId}: Cha
         const data = {
             ...selectedLLMProvider,
             apiKey: apiKey || selectedLLMProvider.apiKey,
-            apiURL: apiURL || selectedLLMProvider.apiURL
+            apiURL: apiURL || selectedLLMProvider.apiURL || DEFAULT_BASE_URL
         };
         setSelectedLLMProvider(data);
         
@@ -283,9 +285,9 @@ export default function ChatSettingSideBar({isRightSidebarOpen, chatRoomId}: Cha
                             </div>
                             <Input
                                 type="text"
-                                placeholder="Enter Base URL (optional)"
+                                placeholder={`Enter Base URL (default: ${DEFAULT_BASE_URL})`}
                                 value={selectedLLMProvider?.apiURL || ''}
-                                onChange={(e) => onLLMProviderChange({apiURL: e.target.value})}
+                                onChange={(e) => onLLMProviderChange({apiURL: e.target.value || DEFAULT_BASE_URL})}
                             />
                         </div>
                     </div>
