@@ -212,31 +212,28 @@ export default function ChatSettingSideBar({isRightSidebarOpen, chatRoomId}: Cha
                                 )}
                             </SelectContent>
                         </Select>
-                        {selectedLLMProvider?.id === 'ollama' && (
-                            <Input
-                                type="text"
-                                placeholder="API endpoint (default: http://localhost:11434)"
-                                value={selectedLLMProvider?.apiURL}
-                                onChange={(e) => onLLMProviderChange({apiURL: e.target.value})}
-                            />
-                        )}
-                        {selectedLLMProvider?.id !== 'ollama' && (
-                            <div className="relative">
+                        <div className="space-y-2">
+                            <div className="flex items-center space-x-2">
                                 <Input
                                     type={showApiKey ? "text" : "password"}
-                                    placeholder="Enter API key"
+                                    placeholder="Enter API Key"
                                     value={selectedLLMProvider?.apiKey || ''}
                                     onChange={(e) => onLLMProviderChange({apiKey: e.target.value})}
-                                    className="pr-16"
                                 />
                                 <button
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-sm text-gray-500 hover:text-gray-700"
                                     onClick={() => setShowApiKey(!showApiKey)}
+                                    className="p-2 hover:bg-gray-200 rounded"
                                 >
-                                    {showApiKey ? "Hide" : "Show"}
+                                    {showApiKey ? '👁️' : '👁️‍🗨️'}
                                 </button>
                             </div>
-                        )}
+                            <Input
+                                type="text"
+                                placeholder="Enter Base URL (optional)"
+                                value={selectedLLMProvider?.apiURL || ''}
+                                onChange={(e) => onLLMProviderChange({apiURL: e.target.value})}
+                            />
+                        </div>
                     </div>
                 </div>
 
